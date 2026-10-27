@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Clinical Pronunciation & Terminology Matrix</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes bamShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-12px, -12px) rotate(-3deg); }
+      30% { transform: translate(12px, 12px) rotate(3deg); }
+      45% { transform: translate(-10px, 10px) rotate(-2deg); }
+      60% { transform: translate(10px, -10px) rotate(2deg); }
+      75% { transform: translate(-5px, 0px) rotate(-1deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    .bam-effect {
+      animation: bamShake 0.45s ease-in-out;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #050a12 0%, #0b1524 50%, #04121f 100%);
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.8); }
+      50% { box-shadow: 0 0 0 18px rgba(225, 29, 72, 0); }
+    }
+    .recording-pulse {
+      animation: pulseGlow 1.2s infinite;
+    }
+  </style>
+</head>
+<body class="gradient-bg text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- TOP HEADER -->
+  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-700/60 sticky top-0 z-40 px-4 py-3 shadow-lg">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <h1 class="text-xl md:text-2xl font-extrabold text-amber-400 tracking-wide flex items-center gap-2">
+          🎙️ Executive Clinical Pronunciation & Specialist Matrix
+        </h1>
+        <p class="text-xs text-slate-400">Curriculum & Framework: <span class="text-teal-300 font-semibold">Giyono Asfarrasyid</span></p>
+      </div>
+
+      <!-- SCOREBOARD & STATS -->
+      <div class="flex items-center gap-4 bg-slate-800/90 px-4 py-2 rounded-xl border border-slate-700">
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Score</span>
+          <span id="scoreDisplay" class="text-2xl font-black text-amber-400">0</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Streak</span>
+          <span id="streakDisplay" class="text-2xl font-black text-emerald-400">0🔥</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Module</span>
+          <span id="caseProgressDisplay" class="text-sm font-bold text-sky-300">1 / 20</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main id="mainContainer" class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+
+    <!-- CONTROLS & MODULE SELECTION -->
+    <section class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/80 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-2">
+        <label for="moduleSelect" class="text-sm font-semibold text-slate-300">Executive Specialty Track:</label>
+        <select id="moduleSelect" class="bg-slate-900 border border-slate-600 text-amber-300 text-sm rounded-lg p-2 focus:ring-2 focus:ring-amber-400 outline-none">
+          <option value="all">All 20 Mastery Modules (Advanced Specialist & Consultant Tier)</option>
+          <option value="1">Modules 1-5: Hemodynamic Crisis & Invasive Cardiology</option>
+          <option value="6">Modules 6-10: ECMO, Resuscitative Surgical & Neuro-Trauma</option>
+          <option value="11">Modules 11-15: Perioperative Anaphylaxis & High-Acuity Isolation</option>
+          <option value="16">Modules 16-20: Resuscitative Thoracotomy & Terminal Extubation</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg transition font-medium">
+          🔄 Reset Matrix
+        </button>
+        <button id="soundToggle" class="bg-amber-700 hover:bg-amber-600 text-white text-xs px-3 py-2 rounded-lg transition font-medium">
+          🔊 Audio FX: ON
+        </button>
+      </div>
+    </section>
+
+    <!-- SCENARIO CARD & PRONUNCIATION MATRIX -->
+    <section class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700 shadow-xl relative overflow-hidden space-y-6">
+      
+      <!-- TOP BADGES -->
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
+        <span id="badgeCategory" class="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full uppercase border border-amber-500/40">
+          Specialty Phase
+        </span>
+        <div class="flex items-center gap-2">
+          <span id="difficultyBadge" class="bg-teal-900/80 text-teal-300 text-xs font-bold px-3 py-1 rounded-full border border-teal-500/40 uppercase">
+            Level 4: High-Acuity Specialist Standard
+          </span>
+          <span class="text-xs text-slate-400">👩 Voice Model & Master Articulation</span>
+        </div>
+      </div>
+
+      <!-- VISUAL SETTING DESCRIPTION -->
+      <div id="visualDescription" class="italic text-xs text-slate-400 bg-slate-900/80 p-3 rounded-lg border-l-4 border-amber-500">
+        "Visual setting..."
+      </div>
+
+      <!-- MULTI-CHARACTER ROUNDTABLE EXCHANGE -->
+      <div class="bg-slate-950/90 p-5 rounded-2xl border border-slate-700 relative shadow-inner space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase font-extrabold text-amber-400 tracking-wider">💬 High-Acuity Specialist Dialogue:</span>
+          <button id="speakDialogueBtn" class="bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/50 p-2 rounded-lg text-xs font-bold transition flex items-center gap-1 flex-shrink-0" title="Listen to Full Roundtable">
+            👨🔊 <span class="hidden md:inline">Listen Handover</span>
+          </button>
+        </div>
+
+        <!-- Speakers -->
+        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="text-xs font-bold bg-purple-900/80 text-purple-300 px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0" id="speaker1Title">Char 1</span>
+          <p id="speaker1Text" class="text-sm md:text-base font-semibold text-purple-200">"Dialogue line 1..."</p>
+        </div>
+        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="text-xs font-bold bg-teal-900/80 text-teal-300 px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0" id="speaker2Title">Char 2</span>
+          <p id="speaker2Text" class="text-sm md:text-base font-semibold text-teal-200">"Dialogue line 2..."</p>
+        </div>
+        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="text-xs font-bold bg-sky-900/80 text-sky-300 px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0" id="speaker3Title">Char 3</span>
+          <p id="speaker3Text" class="text-sm md:text-base font-semibold text-sky-200">"Dialogue line 3..."</p>
+        </div>
+        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="text-xs font-bold bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0" id="speaker4Title">Char 4</span>
+          <p id="speaker4Text" class="text-sm md:text-base font-semibold text-amber-200">"Dialogue line 4..."</p>
+        </div>
+      </div>
+
+      <!-- TARGET PHRASE & PRONUNCIATION / WORD GAME CHALLENGE -->
+      <div class="bg-gradient-to-r from-teal-950/80 to-slate-900 border-2 border-teal-500/60 p-4 rounded-2xl flex flex-col gap-4 shadow-xl">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <span class="text-xs uppercase font-black text-teal-300 tracking-wider block">🎯 Specialist Medical Articulation Target:</span>
+            <div id="targetPronunciationPhrase" class="text-lg md:text-xl font-black text-amber-300">Electrocardiographic ST-segment elevation</div>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button id="listenTargetBtn" class="bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1 shadow-md">
+              🔊 Listen Model
+            </button>
+            <button id="recordMicBtn" class="bg-rose-600 hover:bg-rose-500 text-white font-black text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+              🎤 Practice Mic
+            </button>
+            <button id="revealHintBtn" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold text-xs px-3 py-2.5 rounded-xl transition shadow-md">
+              💡 Phonetic Breakdown
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Word Puzzle / Fill-in-the-blank challenge -->
+        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2">
+          <span class="text-xs text-sky-300 font-bold block">🧩 Specialist Terminology Reconstruction Challenge</span>
+          <div id="wordPuzzleContainer" class="flex flex-wrap gap-2 items-center">
+            <!-- Word chips generated dynamically -->
+          </div>
+          <div id="puzzleFeedback" class="text-xs text-emerald-400 font-semibold"></div>
+        </div>
+      </div>
+
+      <!-- SPEECH STATUS BANNER -->
+      <div id="speechStatusBanner" class="hidden bg-slate-900 border border-slate-700 p-3 rounded-xl text-center text-xs font-bold text-sky-300">
+        🎙️ Listening for professional articulation... Speak clearly into your mic!
+      </div>
+
+      <!-- PROCEDURAL STEP / MECHANISM CARD -->
+      <div class="bg-teal-950/50 border border-teal-700/60 p-3 rounded-xl flex items-center justify-between gap-3">
+        <p id="proceduralStepText" class="text-xs md:text-sm font-semibold text-teal-200">
+          "Procedural step..."
+        </p>
+        <button id="speakHowToBtn" class="bg-teal-500/20 hover:bg-teal-500/40 text-teal-300 border border-teal-500/50 p-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center gap-1 flex-shrink-0">
+          👩🔊 Read
+        </button>
+      </div>
+
+      <!-- CHALLENGE INSTRUCTION -->
+      <div class="bg-teal-950/40 border border-teal-700/50 p-3 rounded-xl flex items-center justify-between">
+        <p id="challengeInstruction" class="text-sm font-semibold text-teal-200">
+          ⚠️ Select ALL evidence-based specialist interventions matching this scenario:
+        </p>
+        <button id="speakInstructionBtn" class="bg-teal-500/20 hover:bg-teal-500/40 text-teal-300 border border-teal-500/50 p-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center gap-1 flex-shrink-0">
+          👩🔊 Read
+        </button>
+      </div>
+
+      <!-- RANDOMIZED OPTIONS MATRIX -->
+      <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Options rendered dynamically -->
+      </div>
+
+      <!-- SUBMIT ACTION BUTTON -->
+      <div class="mt-6 flex justify-end">
+        <button id="submitBtn" class="w-full md:w-auto bg-gradient-to-r from-amber-500 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 text-slate-950 font-black text-lg px-8 py-3.5 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50">
+          SUBMIT SPECIALIST EVALUATION (+100 / 0) 🎯
+        </button>
+      </div>
+
+      <!-- FEEDBACK OVERLAY BANNER -->
+      <div id="feedbackBanner" class="hidden p-4 rounded-xl border text-center font-bold text-lg transition duration-300 space-y-2">
+        <div id="feedbackText"></div>
+        <div id="feedbackSubtext" class="text-xs font-normal mt-1"></div>
+        <div>
+          <button id="nextScenarioBtn" class="hidden mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm px-6 py-2.5 rounded-lg border border-emerald-400 transition font-bold shadow-lg">
+            Next Advanced Scenario ➔
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+    <p>Executive Spoken English for Specialist Nursing & Licensure Matrix</p>
+    <p class="mt-1">Content & Pedagogical Framework © Giyono Asfarrasyid</p>
+  </footer>
+
+  <!-- ENGINE SCRIPT & AUDIO SYNTHESIZER -->
+  <script>
+    // --- DUAL VOICE TEXT-TO-SPEECH (TTS) CONTROLLER ---
+    class DualVoiceTTS {
+      constructor() {
+        this.synth = window.speechSynthesis;
+        this.voices = [];
+        this.initVoices();
+      }
+      initVoices() {
+        if (!this.synth) return;
+        const load = () => { this.voices = this.synth.getVoices(); };
+        load();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+          speechSynthesis.onvoiceschanged = load;
+        }
+      }
+      getVoice(gender) {
+        if (!this.voices || this.voices.length === 0) return null;
+        const en = this.voices.filter(v => v.lang.startsWith('en'));
+        if (gender === 'male') {
+          return en.find(v => v.name.includes('Male') || v.name.includes('David') || v.name.includes('George') || v.name.includes('James')) || en[0];
+        } else {
+          return en.find(v => v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Hazel')) || en[1] || en[0];
+        }
+      }
+      speak(text, gender = 'female', rate = 0.88) {
+        if (!this.synth) return;
+        this.synth.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = rate;
+        const voice = this.getVoice(gender);
+        if (voice) u.voice = voice;
+        u.pitch = (gender === 'male') ? 0.85 : 1.25;
+        this.synth.speak(u);
+      }
+    }
+
+    const tts = new DualVoiceTTS();
+
+    // --- WEB AUDIO API SOUND FX SYNTHESIZER ---
+    class SoundEffects {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + (idx * 0.08));
+          gain.gain.setValueAtTime(0.15, now + (idx * 0.08));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.08) + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + (idx * 0.08));
+          osc.stop(now + (idx * 0.08) + 0.35);
+        });
+      }
+      playIncorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
+    }
+
+    const soundFX = new SoundEffects();
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // --- 20 EXECUTIVE HIGH-ACUITY SPECIALIST SCENARIOS ---
+    const pronunciationWordScenarios = [
+      {
+        id: 1,
+        moduleGroup: "1",
+        moduleTitle: "Module 1: Acute Transmural Myocardial Infarction",
+        visual: "Cath Lab Bay. Roundtable with Interventional Cardiologist, Critical Care Fellow, Perfusionist, and ICU Charge Nurse.",
+        s1: { speaker: "Interventional Cardiologist", text: "The 12-lead ECG confirms acute transmural myocardial injury with anterior ST-segment elevation." },
+        s2: { speaker: "Critical Care Fellow", text: "Cardiac troponin-I levels show a steep escalation alongside CK-MB isoenzyme elevation." },
+        s3: { speaker: "Perfusionist", text: "Activating primary percutaneous coronary intervention cath team immediately." },
+        s4: { speaker: "ICU Charge Nurse", text: "Administering aspirin, ticagrelor loading dose, and continuous intravenous heparin infusion." },
+        targetPhrase: "Electrocardiographic ST-segment elevation",
+        puzzleWords: ["Electrocardiographic", "ST-segment", "elevation"],
+        phoneticHint: "ee-lek-troh-kar-dee-uh-GRAF-ik ess-tee seg-ment el-uh-VAY-shun",
+        howTo: "Step 2 Mechanism: Rapidly interpret 12-lead ECG, establish dual venous access, and initiate emergency antiplatelet therapy.",
+        options: [
+          { text: "Document acute electrocardiographic ST-segment elevation myocardial infarction with cardiac enzyme correlation.", isCorrect: true },
+          { text: "Initiate emergency percutaneous coronary intervention pathway and administer weight-adjusted heparin bolus.", isCorrect: true },
+          { text: "Discharge patient with instructions for routine outpatient physical exercise.", isCorrect: false, reason: "Dangerous clinical oversight trap." },
+          { text: "Administer high-dose oral beta-blocker during acute cardiogenic collapse.", isCorrect: false, reason: "Hemodynamic shock hazard." }
+        ]
+      },
+      {
+        id: 2,
+        moduleGroup: "1",
+        moduleTitle: "Module 2: Refractory Septic Shock & Vasoactive Titration",
+        visual: "MICU Resuscitation Suite. Roundtable with Intensivist, Clinical Pharmacist, Senior RN, and Respiratory Specialist.",
+        s1: { speaker: "Intensivist", text: "Patient remains hypotensive despite six liters of crystalloid fluid resuscitation." },
+        s2: { speaker: "Clinical Pharmacist", text: "Serum arterial lactate is 4.8 millimoles per liter, indicating profound tissue dysoxia." },
+        s3: { speaker: "Senior RN", text: "Central line is placed; initiating norepinephrine continuous infusion via central lumen." },
+        s4: { speaker: "Respiratory Specialist", text: "Lung-protective mechanical ventilation is established with low tidal volume parameters." },
+        targetPhrase: "Refractory septic shock hemodynamics",
+        puzzleWords: ["Refractory", "septic", "shock", "hemodynamics"],
+        phoneticHint: "ri-FRAK-tuh-ree SEP-tik shok hee-moh-dy-NAM-iks",
+        howTo: "Step 3 Protocol: Titrate norepinephrine via central venous line to maintain MAP >= 65 mmHg while tracking lactate clearance.",
+        options: [
+          { text: "Manage refractory septic shock hemodynamics by titrating vasoactive norepinephrine via central venous catheter.", isCorrect: true },
+          { text: "Track serial lactate clearance and central venous oxygen saturation to ensure tissue re-perfusion.", isCorrect: true },
+          { text: "Discontinue all intravenous fluids and withhold broad-spectrum antimicrobial therapy.", isCorrect: false, reason: "Fatal sepsis mismanagement trap." },
+          { text: "Administer rapid oral laxatives to treat hypovolemic hypotension.", isCorrect: false, reason: "Inappropriate non-clinical distractor." }
+        ]
+      },
+      {
+        id: 3,
+        moduleGroup: "1",
+        moduleTitle: "Module 3: Severe Acute Respiratory Distress Syndrome",
+        visual: "MICU Negative Pressure Suite. Roundtable with Pulmonologist, ECMO Coordinator, Bedside RN, and Respiratory Therapist.",
+        s1: { speaker: "Pulmonologist", text: "Arterial blood gas confirms severe ARDS with a PaO2 to FiO2 ratio below 80." },
+        s2: { speaker: "ECMO Coordinator", text: "Bilateral dense pulmonary consolidations visible across all pulmonary zones on chest radiograph." },
+        s3: { speaker: "Respiratory Therapist", text: "Peak inspiratory pressures exceed 35 centimeters of water despite low tidal setting." },
+        s4: { speaker: "Bedside RN", text: "Initiating prone positioning protocol for sixteen consecutive hours." },
+        targetPhrase: "Severe acute respiratory distress syndrome",
+        puzzleWords: ["Severe", "acute", "respiratory", "distress", "syndrome"],
+        phoneticHint: "suh-VEER uh-KYOOT res-puh-ruh-tor-ee di-STRES SIN-drohm",
+        howTo: "Step 2 Ventilatory Protocol: Implement prone positioning protocols, high PEEP strategy, and lung-protective tidal volumes.",
+        options: [
+          { text: "Document severe acute respiratory distress syndrome requiring prone positioning and neuromuscular blockade.", isCorrect: true },
+          { text: "Maintain low tidal volume ventilation (6 mL/kg PBW) and restrict plateau pressure under 30 cmH2O.", isCorrect: true },
+          { text: "Set ventilator tidal volumes to maximum capacity to force open alveoli.", isCorrect: false, reason: "Volutrauma barotrauma hazard." },
+          { text: "Extubate patient immediately and place on ambient air.", isCorrect: false, reason: "Catastrophic hypoxic arrest." }
+        ]
+      },
+      {
+        id: 4,
+        moduleGroup: "1",
+        moduleTitle: "Module 4: Elevated Intracranial Pressure & Neuro-Crisis",
+        visual: "Neuro-ICU Suite. Roundtable with Neurosurgeon, Neuro-Intensivist, Trauma RN, and Radiology Specialist.",
+        s1: { speaker: "Neurosurgeon", text: "Intraventricular catheter manometry demonstrates persistent ICP spikes above 25 mmHg." },
+        s2: { speaker: "Neuro-Intensivist", text: "Calculate cerebral perfusion pressure continuously: CPP equals MAP minus ICP." },
+        s3: { speaker: "Trauma RN", text: "Elevating head of bed 30 degrees and keeping neck strictly midline." },
+        s4: { speaker: "Radiology Specialist", text: "Computed tomography shows hyperdense epidural hematoma with uncal herniation risk." },
+        targetPhrase: "Elevated intracranial pressure monitoring",
+        puzzleWords: ["Elevated", "intracranial", "pressure", "monitoring"],
+        phoneticHint: "EL-uh-vay-tid in-truh-KRAH-nee-ul PRESH-ur MON-i-tor-ing",
+        howTo: "Step 3 Neurological Protocol: Maintain CPP between 60-70 mmHg, administer osmotic diuretics, and prevent jugular venous compression.",
+        options: [
+          { text: "Monitor elevated intracranial pressure via intraventricular catheter and calculate cerebral perfusion pressure.", isCorrect: true },
+          { text: "Administer ordered hypertonic saline 3% or mannitol boluses to draw cerebral edema.", isCorrect: true },
+          { text: "Place patient in Trendelenburg position to improve cerebral blood pooling.", isCorrect: false, reason: "Dangerous ICP elevation hazard." },
+          { text: "Discontinue all neurological checks and sedatives.", isCorrect: false, reason: "Unsafe monitoring failure." }
+        ]
+      },
+      {
+        id: 5,
+        moduleGroup: "1",
+        moduleTitle: "Module 5: Diabetic Ketoacidosis & Hyperkalemia",
+        visual: "ED Resuscitation Bay. Roundtable with Endocrinologist, ED Charge RN, Clinical Pharmacist, and Lab Specialist.",
+        s1: { speaker: "Endocrinologist", text: "Arterial blood gas shows pH 7.10 with high anion gap metabolic acidosis and severe ketonuria." },
+        s2: { speaker: "ED Charge RN", text: "Blood glucose exceeds 650 mg/dL with severe osmotic diuresis and dehydration." },
+        s3: { speaker: "Clinical Pharmacist", text: "Hold insulin if serum potassium is under 3.3; replete potassium first." },
+        s4: { speaker: "Lab Specialist", text: "Serial electrolyte and blood gas panels ordered every two hours." },
+        targetPhrase: "Severe metabolic acidosis and ketonuria",
+        puzzleWords: ["Severe", "metabolic", "acidosis", "ketonuria"],
+        phoneticHint: "suh-VEER met-uh-BOL-ik ass-ih-DOH-sis kee-toh-NYOOR-ee-uh",
+        howTo: "Step 2 Protocol: Aggressive fluid resuscitation with 0.9% NaCl, potassium repletion, and continuous regular insulin infusion.",
+        options: [
+          { text: "Manage severe metabolic acidosis and ketonuria secondary to uncontrolled diabetic ketoacidosis.", isCorrect: true },
+          { text: "Administer intravenous regular insulin infusion and monitor serum potassium closely.", isCorrect: true },
+          { text: "Withhold IV fluids and administer oral concentrated sugar syrup.", isCorrect: false, reason: "Lethal hyperglycemia trap." },
+          { text: "Ignore electrolyte imbalances and discharge without endocrine care.", isCorrect: false, reason: "Substandard care hazard." }
+        ]
+      },
+      {
+        id: 6,
+        moduleGroup: "6",
+        moduleTitle: "Module 6: Malignant Hyperthermia Crisis",
+        visual: "OR Suite. Roundtable with Anesthesiologist, Operating Room RN, Surgical Specialist, and Clinical Pharmacist.",
+        s1: { speaker: "Anesthesiologist", text: "End-tidal CO2 is spiking rapidly alongside masseter muscle rigidity and hyperthermia!" },
+        s2: { speaker: "Operating Room RN", text: "Halt volatile anesthetics immediately and hyperventilate with 100% oxygen." },
+        s3: { speaker: "Clinical Pharmacist", text: "Reconstituting dantrolene sodium vials rapidly with sterile water." },
+        s4: { speaker: "Surgical Specialist", text: "Aborting surgical procedure and applying active core ice cooling." },
+        targetPhrase: "Malignant hyperthermia hypermetabolic crisis",
+        puzzleWords: ["Malignant", "hyperthermia", "hypermetabolic", "crisis"],
+        phoneticHint: "muh-LIG-nunt hy-per-THUR-mee-uh hy-per-met-uh-BOL-ik KRY-sis",
+        howTo: "Step 3 Emergency Antidote: Administer IV dantrolene sodium (2.5 mg/kg), cease volatile anesthetics, and cool core body.",
+        options: [
+          { text: "Recognize malignant hyperthermia hypermetabolic crisis triggered by volatile inhaled anesthetics.", isCorrect: true },
+          { text: "Administer emergency intravenous dantrolene sodium boluses and institute active core body cooling.", isCorrect: true },
+          { text: "Continue inhaled anesthetic gases and apply warming blankets.", isCorrect: false, reason: "Lethal hyperthermia escalation trap." },
+          { text: "Leave patient unattended in operating room during crisis.", isCorrect: false, reason: "Fatal perioperative abandonment." }
+        ]
+      },
+      {
+        id: 7,
+        moduleGroup: "6",
+        moduleTitle: "Module 7: Massive Transfusion Protocol & Coagulopathy",
+        visual: "Trauma Resuscitation Suite. Roundtable with Trauma Surgeon, Blood Bank Lead, Transfusion RN, and Anesthetist.",
+        s1: { speaker: "Trauma Surgeon", text: "Penetrating vascular trauma causing exsanguinating hemorrhage and lethal triad coagulopathy." },
+        s2: { speaker: "Blood Bank Lead", text: "Massive Transfusion Protocol activated: 1:1:1 ratio of PRBCs, FFP, and platelets." },
+        s3: { speaker: "Transfusion RN", text: "Rapid blood warmer and level-1 infuser operational at maximum rate." },
+        s4: { speaker: "Anesthetist", text: "Monitoring thromboelastography parameters to guide calcium and fibrinogen repletion." },
+        targetPhrase: "Exsanguinating hemorrhage coagulopathy",
+        puzzleWords: ["Exsanguinating", "hemorrhage", "coagulopathy"],
+        phoneticHint: "ek-SANG-gwih-nay-ting HEM-uh-rij koh-ag-yoo-LOP-uh-thee",
+        howTo: "Step 2 Transfusion Protocol: Execute 1:1:1 balanced transfusion, prevent hypothermia, and replete ionized calcium.",
+        options: [
+          { text: "Activate Massive Transfusion Protocol for exsanguinating hemorrhage and acute traumatic coagulopathy.", isCorrect: true },
+          { text: "Administer balanced blood component ratios (PRBCs, plasma, platelets) using rapid blood warmers.", isCorrect: true },
+          { text: "Infuse unheated cold crystalloid solutions rapidly to induce hypothermia.", isCorrect: false, reason: "Exacerbates lethal trauma triad." },
+          { text: "Delay blood administration until outpatient paperwork is completed.", isCorrect: false, reason: "Fatal resuscitation delay." }
+        ]
+      },
+      {
+        id: 8,
+        moduleGroup: "6",
+        moduleTitle: "Module 8: Pulmonary Artery Catheter Hemodynamics",
+        visual: "Cardiothoracic ICU. Roundtable with Advanced Practice RN, Intensivist, Cardiology Fellow, and Bedside RN.",
+        s1: { speaker: "Advanced Practice RN", text: "Swan-Ganz catheter shows PCWP elevated at 24 mmHg with severely reduced cardiac index." },
+        s2: { speaker: "Intensivist", text: "Systemic vascular resistance is high at 1800 dyne-sec/cm5, indicating profound afterload." },
+        s3: { speaker: "Cardiology Fellow", text: "Initiate milrinone inodilator infusion to decrease afterload and increase contractility." },
+        s4: { speaker: "Bedside RN", text: "Zeroing pressure transducers at the phlebostatic axis (4th intercostal space mid-axillary line)." },
+        targetPhrase: "Pulmonary artery wedge pressure",
+        puzzleWords: ["Pulmonary", "artery", "wedge", "pressure"],
+        phoneticHint: "PUL-muh-ner-ee AR-tuh-ree wej PRESH-ur",
+        howTo: "Step 4 Hemodynamic Analysis: Calibrate pressure transducers, evaluate PCWP and SVR, and titrate inodilators.",
+        options: [
+          { text: "Evaluate pulmonary artery wedge pressure and cardiac output parameters to optimize cardiogenic shock care.", isCorrect: true },
+          { text: "Ensure accurate hemodynamic transducer leveling at the phlebostatic axis prior to recording values.", isCorrect: true },
+          { text: "Inject unsterile air directly into pulmonary catheter port continuously.", isCorrect: false, reason: "Lethal air embolism hazard." },
+          { text: "Ignore abnormal wedge pressure readings as calibration artifacts.", isCorrect: false, reason: "Critical care negligence." }
+        ]
+      },
+      {
+        id: 9,
+        moduleGroup: "6",
+        moduleTitle: "Module 9: Pediatric Status Epilepticus Protocol",
+        visual: "PICU Resuscitation Bay. Roundtable with Pediatric Intensivist, Pediatric Neurologist, PICU RN, and Pharmacist.",
+        s1: { speaker: "Pediatric Intensivist", text: "Toddler experiencing continuous convulsive status epilepticus lasting over twenty minutes." },
+        s2: { speaker: "Pediatric Neurologist", text: "Administer weight-based IV lorazepam immediately as first-line abortive therapy." },
+        s3: { speaker: "Pharmacist", text: "Preparing levetiracetam loading dose (60 mg/kg) for second-line control." },
+        s4: { speaker: "PICU RN", text: "Maintaining airway patency, high-flow oxygen, and blood glucose monitoring." },
+        targetPhrase: "Refractory convulsive status epilepticus",
+        puzzleWords: ["Refractory", "convulsive", "status", "epilepticus"],
+        phoneticHint: "ri-FRAK-tuh-ree kun-VUL-siv STAT-us ep-ih-LEP-ti-kus",
+        howTo: "Step 3 Emergency Protocol: Protect airway, administer benzodiazepine abortives, and prepare antiepileptic loading doses.",
+        options: [
+          { text: "Manage refractory convulsive status epilepticus with weight-based IV benzodiazepines and antiepileptic loading doses.", isCorrect: true },
+          { text: "Monitor pediatric airway patency, oxygenation status, and cerebral electrical activity continuously.", isCorrect: true },
+          { text: "Restrain pediatric patient forcibly with metal restraints without medication.", isCorrect: false, reason: "Unethical abusive restraint trap." },
+          { text: "Delay treatment until seizure terminates spontaneously without intervention.", isCorrect: false, reason: "Permanent neurological injury hazard." }
+        ]
+      },
+      {
+        id: 10,
+        moduleGroup: "6",
+        moduleTitle: "Module 10: Extracorporeal Membrane Oxygenation Emergencies",
+        visual: "Cardiothoracic ICU Suite. Roundtable with ECMO Specialist, Perfusionist, ICU RN, and Cardiovascular Surgeon.",
+        s1: { speaker: "ECMO Specialist", text: "VV-ECMO circuit displaying severe mechanical chatter and venous line negative pressure alarms." },
+        s2: { speaker: "Perfusionist", text: "Cannula migration suspected causing venous suction occlusion and cavitation." },
+        s3: { speaker: "ICU RN", text: "Checking pump RPMs and preparing volume bolus per emergency protocol." },
+        s4: { speaker: "Cardiovascular Surgeon", text: "Bedside cannula repositioning and fluoroscopy inspection ready." },
+        targetPhrase: "Extracorporeal membrane oxygenation circuit",
+        puzzleWords: ["Extracorporeal", "membrane", "oxygenation", "circuit"],
+        phoneticHint: "eks-truh-kor-POH-ree-ul MEM-brayn ok-si-juh-NAY-shun SUR-kit",
+        howTo: "Step 3 Circuit Safety: Troubleshoot pump chatter, inspect cannula position, and administer volume bolus to relieve suction.",
+        options: [
+          { text: "Troubleshoot extracorporeal membrane oxygenation circuit alarms and manage pump chatter emergencies.", isCorrect: true },
+          { text: "Execute emergency mechanical troubleshooting algorithms for venous drainage obstruction or cannula displacement.", isCorrect: true },
+          { text: "Cut circuit tubing with surgical scissors while pump is operating.", isCorrect: false, reason: "Catastrophic exsanguination hazard." },
+          { text: "Silence all monitor alarms and walk away from patient bedside.", isCorrect: false, reason: "Fatal abandonment negligence." }
+        ]
+      },
+      {
+        id: 11,
+        moduleGroup: "11",
+        moduleTitle: "Module 11: Perioperative Anaphylactic Collapse",
+        visual: "OR Bay 3. Roundtable with Anesthesiologist, OR Circulator, Surgical Attending, and Clinical Pharmacist.",
+        s1: { speaker: "Anesthesiologist", text: "Sudden severe bronchospasm, facial angioedema, and unmeasurable BP post-cefazolin administration." },
+        s2: { speaker: "OR Circulator", text: "Peak inspiratory pressures spiked from 18 to 48 centimeters of water." },
+        s3: { speaker: "Clinical Pharmacist", text: "Administering IM epinephrine (0.3 mg) and rapid IV crystalloid volume infusion." },
+        s4: { speaker: "Surgical Attending", text: "Halting surgical intervention and applying 100% oxygen ventilation." },
+        targetPhrase: "Catastrophic vasomotor cardiovascular collapse",
+        puzzleWords: ["Catastrophic", "vasomotor", "cardiovascular", "collapse"],
+        phoneticHint: "kat-uh-STROS-fik vay-zoh-MO-tor kar-dee-oh-VAS-kyoo-ler kuh-LAPS",
+        howTo: "Step 2 Anaphylaxis Protocol: Administer IM epinephrine immediately, stop offending drug, and fluid resuscitate.",
+        options: [
+          { text: "Treat catastrophic vasomotor cardiovascular collapse secondary to severe perioperative anaphylaxis.", isCorrect: true },
+          { text: "Administer prompt IM epinephrine, aggressive crystalloid volume expansion, and antihistamines.", isCorrect: true },
+          { text: "Administer additional doses of the suspected antibiotic allergen.", isCorrect: false, reason: "Lethal anaphylactic escalation." },
+          { text: "Ignore hypotension as a normal anesthetic effect.", isCorrect: false, reason: "Fatal cardiovascular collapse negligence." }
+        ]
+      },
+      {
+        id: 12,
+        moduleGroup: "12",
+        moduleTitle: "Module 12: High-Risk Heart Failure Transitional Care",
+        visual: "Discharge Planning Center. Roundtable with Case Manager, Discharge Pharmacist, Home Health RN, and Patient.",
+        s1: { speaker: "Case Manager", text: "Complex end-stage heart failure patient requiring coordinated home tele-health monitoring." },
+        s2: { speaker: "Discharge Pharmacist", text: "Reconciling quadruple medical therapy including sacubitril/valsartan and SGLT2 inhibitors." },
+        s3: { speaker: "Home Health RN", text: "Verifying daily weight protocol and remote blood pressure telemetry setup." },
+        s4: { speaker: "Patient", text: "I will call the nurse immediately if my weight increases by 3 pounds in one day." },
+        targetPhrase: "Comprehensive transitional care coordination",
+        puzzleWords: ["Comprehensive", "transitional", "care", "coordination"],
+        phoneticHint: "kom-pri-HEN-siv tran-ZISH-un-ul kair koh-or-di-NAY-shun",
+        howTo: "Step 4 Protocol: Perform medication reconciliation, educate on heart failure red flags, and set up tele-health.",
+        options: [
+          { text: "Execute comprehensive transitional care coordination including medication reconciliation and remote monitoring.", isCorrect: true },
+          { text: "Educate patient on heart failure exacerbation red flags (sudden weight gain, orthopnea, edema).", isCorrect: true },
+          { text: "Discharge patient without prescriptions or follow-up instructions.", isCorrect: false, reason: "Unsafe transitional care violation." },
+          { text: "Tell patient diet and fluid limits are unnecessary.", isCorrect: false, reason: "Dangerous heart failure exacerbation trap." }
+        ]
+      },
+      {
+        id: 13,
+        moduleGroup: "13",
+        moduleTitle: "Module 13: Abdominal Wound Evisceration Emergency",
+        visual: "Surgical Ward. Roundtable with Wound Care Specialist, Surgical Resident, Staff RN, and Patient.",
+        s1: { speaker: "Staff RN", text: "Rupture of midline abdominal wound with exteriorization of small bowel loops!" },
+        s2: { speaker: "Surgical Resident", text: "Never attempt to force protruding abdominal organs back into peritoneal cavity." },
+        s3: { speaker: "Wound Care Specialist", text: "Cover protruding bowel immediately with sterile saline-soaked sponges and sterile drape." },
+        s4: { speaker: "Patient", text: "I felt a severe popping sensation while coughing a moment ago." },
+        targetPhrase: "Acute surgical wound evisceration",
+        puzzleWords: ["Acute", "surgical", "wound", "evisceration"],
+        phoneticHint: "uh-KYOOT SUR-ji-kul woond ee-vis-er-AY-shun",
+        howTo: "Step 3 Surgical Emergency: Apply moist sterile dressings, place patient in low Fowler's with knees flexed, and call OR.",
+        options: [
+          { text: "Manage acute surgical wound evisceration by applying sterile saline-soaked dressings over exposed viscera.", isCorrect: true },
+          { text: "Position patient in low Fowler's with flexed knees to minimize abdominal wall tension.", isCorrect: true },
+          { text: "Push protruding bowel back into abdominal cavity with bare hands.", isCorrect: false, reason: "Severe peritoneal infection trap." },
+          { text: "Leave wound uncovered to air dry.", isCorrect: false, reason: "Fatal tissue necrosis hazard." }
+        ]
+      },
+      {
+        id: 14,
+        moduleGroup: "14",
+        moduleTitle: "Module 14: Acute Psychomotor Agitation Crisis",
+        visual: "Psychiatric ICU Bay. Roundtable with Psych NP, Attending Psychiatrist, Security Lead, and Pharmacist.",
+        s1: { speaker: "Psych NP", text: "Patient exhibiting severe psychomotor agitation and violent physical threats." },
+        s2: { speaker: "Attending Psychiatrist", text: "Attempt verbal de-escalation prior to emergency chemical restraint." },
+        s3: { speaker: "Pharmacist", text: "Preparing IM haloperidol and lorazepam combination for rapid tranquilization." },
+        s4: { speaker: "Security Lead", text: "Securing room perimeter while maintaining de-escalation posture." },
+        targetPhrase: "Acute psychomotor agitation management",
+        puzzleWords: ["Acute", "psychomotor", "agitation", "management"],
+        phoneticHint: "uh-KYOOT sy-koh-MOH-tor aj-ih-TAY-shun MAN-ij-munt",
+        howTo: "Step 3 Crisis Protocol: Utilize verbal de-escalation, maintain safety perimeter, and administer IM tranquilization.",
+        options: [
+          { text: "Execute acute psychomotor agitation management protocols combining verbal de-escalation and chemical restraint.", isCorrect: true },
+          { text: "Monitor vital signs and airway patency continuously following intramuscular medication administration.", isCorrect: true },
+          { text: "Apply physical restraints indefinitely without clinical monitoring.", isCorrect: false, reason: "Unethical unlawful restraint violation." },
+          { text: "Taunt and antagonize agitated patient.", isCorrect: false, reason: "Dangerous psychiatric escalation trap." }
+        ]
+      },
+      {
+        id: 15,
+        moduleGroup: "15",
+        moduleTitle: "Module 15: Acute Tumor Lysis Syndrome",
+        visual: "Oncology Inpatient Suite. Roundtable with Medical Oncologist, Nephrologist, Oncology RN, and Pharmacist.",
+        s1: { speaker: "Medical Oncologist", text: "Rapid tumor cell lysis post-chemotherapy triggering acute tumor lysis syndrome." },
+        s2: { speaker: "Nephrologist", text: "Severe hyperkalemia, hyperphosphatemia, hypocalcemia, and hyperuricemia on labs." },
+        s3: { speaker: "Oncology RN", text: "Initiating IV hyperhydration (3 L/m2/day) and administering rasburicase infusion." },
+        s4: { speaker: "Pharmacist", text: "Continuous cardiac telemetry active to detect hyperkalemic T-wave changes." },
+        targetPhrase: "Acute tumor lysis syndrome",
+        puzzleWords: ["Acute", "tumor", "lysis", "syndrome"],
+        phoneticHint: "uh-KYOOT TOO-mor LY-sis SIN-drohm",
+        howTo: "Step 3 Oncologic Emergency: Administer aggressive IV hydration, rasburicase/allopurinol, and monitor electrolytes.",
+        options: [
+          { text: "Recognize acute tumor lysis syndrome characterized by hyperkalemia, hyperuricemia, and acute renal injury.", isCorrect: true },
+          { text: "Administer aggressive intravenous hyperhydration and rasburicase to lower serum uric acid levels.", isCorrect: true },
+          { text: "Restrict fluid intake and administer high-dose potassium supplements.", isCorrect: false, reason: "Lethal hyperkalemic cardiac arrest trap." },
+          { text: "Discontinue electrolyte blood draws during chemotherapy.", isCorrect: false, reason: "Oncologic negligence." }
+        ]
+      },
+      {
+        id: 16,
+        moduleGroup: "16",
+        moduleTitle: "Module 16: Resuscitative Emergency Department Thoracotomy",
+        visual: "Level 1 Trauma Resuscitation Bay. Roundtable with Trauma Team Leader, Emergency Physician, Thoracic Surgeon, and Trauma RN.",
+        s1: { speaker: "Emergency Physician", text: "Penetrating chest trauma victim in traumatic arrest with loss of vital signs 3 minutes ago." },
+        s2: { speaker: "Thoracic Surgeon", text: "Performing immediate left anterolateral thoracotomy and pericardiotomy." },
+        s3: { speaker: "Trauma Team Leader", text: "Relieving pericardial tamponade and cross-clamping descending thoracic aorta." },
+        s4: { speaker: "Trauma RN", text: "Initiating internal cardiac massage and rapid blood warmer infusion." },
+        targetPhrase: "Resuscitative department thoracotomy",
+        puzzleWords: ["Resuscitative", "department", "thoracotomy"],
+        phoneticHint: "ri-SUS-ih-tay-tiv dee-PART-munt thor-uh-KOT-uh-mee",
+        howTo: "Step 2 Surgical Resuscitation: Perform left thoracotomy, open pericardium, cross-clamp aorta, and perform internal cardiac massage.",
+        options: [
+          { text: "Perform resuscitative department thoracotomy for penetrating chest trauma in witnessed arrest.", isCorrect: true },
+          { text: "Relieve cardiac tamponade, cross-clamp descending thoracic aorta, and initiate open cardiac massage.", isCorrect: true },
+          { text: "Transfer traumatic arrest patient to outpatient radiology waiting room.", isCorrect: false, reason: "Fatal malpractice delay." },
+          { text: "Withhold all emergency resuscitative interventions.", isCorrect: false, reason: "Unlawful patient abandonment." }
+        ]
+      },
+      {
+        id: 17,
+        moduleGroup: "17",
+        moduleTitle: "Module 17: Biocontainment Isolation Protocols",
+        visual: "Special Pathogens Unit. Roundtable with Biocontainment Officer, Epidemiologist, Lead RN, and Safety Inspector.",
+        s1: { speaker: "Epidemiologist", text: "Confirmed case of viral hemorrhagic fever requires level-4 biocontainment precautions." },
+        s2: { speaker: "Biocontainment Officer", text: "Inspect Powered Air-Purifying Respirator (PAPR) airflow and battery before entry." },
+        s3: { speaker: "Safety Inspector", text: "Trained observer must monitor complete PPE doffing sequence step-by-step." },
+        s4: { speaker: "Lead RN", text: "Managing negative pressure room airflow and closed-loop fluid monitoring." },
+        targetPhrase: "Powered air purifying respirator",
+        puzzleWords: ["Powered", "air", "purifying", "respirator"],
+        phoneticHint: "POU-erd air PYOO-ri-fy-ing RES-puh-ray-tor",
+        howTo: "Step 3 Biosafety Protocol: Inspect PAPR gear, maintain negative pressure isolation, and follow observer-led doffing.",
+        options: [
+          { text: "Utilize powered air purifying respirator and strict biocontainment protocols for viral hemorrhagic fever.", isCorrect: true },
+          { text: "Enforce observer-monitored PPE doffing checklists to prevent pathogen self-contamination.", isCorrect: true },
+          { text: "Enter viral isolation unit wearing a cloth mask and street clothes.", isCorrect: false, reason: "Catastrophic biological exposure hazard." },
+          { text: "Discard biohazardous waste into hallway trash cans.", isCorrect: false, reason: "Severe infection control breach." }
+        ]
+      },
+      {
+        id: 18,
+        moduleGroup: "18",
+        moduleTitle: "Module 18: Home Mechanical Ventilation Management",
+        visual: "Home ICU Suite. Roundtable with Pulmonologist, Home Respiratory RN, Clinical Engineer, and Caregiver.",
+        s1: { speaker: "Pulmonologist", text: "ALS patient supported on home ventilator via tracheostomy with nocturnal pressure support." },
+        s2: { speaker: "Home Respiratory RN", text: "Auditing ventilator alarms: low peak pressure, disconnect, and high pressure limits." },
+        s3: { speaker: "Clinical Engineer", text: "Testing emergency battery backup power supply and portable oxygen concentrator." },
+        s4: { speaker: "Caregiver", text: "Performing sterile tracheostomy suctioning and inner cannula cleaning daily." },
+        targetPhrase: "Mechanical ventilator alarm settings",
+        puzzleWords: ["Mechanical", "ventilator", "alarm", "settings"],
+        phoneticHint: "muh-KAN-ih-kul VEN-til-ay-toruh-LARM SET-ingz",
+        howTo: "Step 4 Home Safety: Inspect ventilator alarm settings, verify backup battery systems, and teach sterile suctioning.",
+        options: [
+          { text: "Verify mechanical ventilator alarm settings, tracheostomy security, and backup battery functionality.", isCorrect: true },
+          { text: "Educate home caregiver on sterile tracheostomy suctioning and emergency ventilator troubleshooting.", isCorrect: true },
+          { text: "Disconnect mechanical ventilator permanently and remove oxygen.", isCorrect: false, reason: "Fatal asphyxiation hazard." },
+          { text: "Ignore low-pressure ventilator alarms during sleep.", isCorrect: false, reason: "Home care negligence." }
+        ]
+      },
+      {
+        id: 19,
+        moduleGroup: "19",
+        moduleTitle: "Module 19: Acute Hyperactive Delirium Evaluation",
+        visual: "Geriatric Acute Unit. Roundtable with Geriatrician, Clinical Nurse Specialist, OT, and Clinical Pharmacist.",
+        s1: { speaker: "Geriatrician", text: "Sudden fluctuating confusion and agitation in elderly patient requiring CAM assessment." },
+        s2: { speaker: "Clinical Nurse Specialist", text: "Confusion Assessment Method confirms hyperactive delirium secondary to UTI and anticholinergic load." },
+        s3: { speaker: "Clinical Pharmacist", text: "Deprescribing sedating anticholinergic medications contributing to encephalopathy." },
+        s4: { speaker: "OT", text: "Implementing non-pharmacological reorientation, sensory aids, and sleep hygiene." },
+        targetPhrase: "Acute hyperactive delirium screening",
+        puzzleWords: ["Acute", "hyperactive", "delirium", "screening"],
+        phoneticHint: "uh-KYOOT hy-per-AK-tiv dih-LIR-ee-um SKREEN-ing",
+        howTo: "Step 2 Assessment: Conduct Confusion Assessment Method (CAM), treat underlying etiology, and reorient.",
+        options: [
+          { text: "Perform acute hyperactive delirium screening using Confusion Assessment Method (CAM) tools.", isCorrect: true },
+          { text: "Identify and treat underlying delirium precipitants (UTI, urinary retention, anticholinergic drugs).", isCorrect: true },
+          { text: "Administer high-dose heavy sedatives routinely as first-line treatment.", isCorrect: false, reason: "Exacerbates delirium and mortality." },
+          { text: "Lock elderly patient in dark room without glasses or hearing aids.", isCorrect: false, reason: "Unethical abusive isolation." }
+        ]
+      },
+      {
+        id: 20,
+        moduleGroup: "20",
+        moduleTitle: "Module 20: Terminal Mechanical Ventilator Withdrawal",
+        visual: "Palliative Care Suite. Roundtable with Palliative Physician, Hospice RN, Pharmacist, and Family.",
+        s1: { speaker: "Palliative Physician", text: "Initiating compassionate terminal ventilator withdrawal per patient advanced directive." },
+        s2: { speaker: "Hospice RN", text: "Pre-medicating with IV morphine and lorazepam to prevent terminal dyspnea and distress." },
+        s3: { speaker: "Pharmacist", text: "Subcutaneous morphine continuous infusion calibrated for total symptom relief." },
+        s4: { speaker: "Family", text: "Grateful for peaceful, pain-free transition surrounded by family." },
+        targetPhrase: "Terminal mechanical ventilator withdrawal",
+        puzzleWords: ["Terminal", "mechanical", "ventilator", "withdrawal"],
+        phoneticHint: "TUR-min-ul muh-KAN-ih-kul VEN-til-ay-tor with-DRAW-ul",
+        howTo: "Step 3 Palliative Protocol: Administer pre-emptive opioids/sedatives, withdraw ventilator support, and support family.",
+        options: [
+          { text: "Execute terminal mechanical ventilator withdrawal supported by pre-emptive opioid symptom mitigation.", isCorrect: true },
+          { text: "Administer continuous subcutaneous morphine and anticholinergics to control dyspnea and secretions.", isCorrect: true },
+          { text: "Perform aggressive CPR and invasive interventions against hospice directive.", isCorrect: false, reason: "Violates palliative ethics." },
+          { text: "Abandon dying patient without comfort medication.", isCorrect: false, reason: "Cruel professional abandonment." }
+        ]
+      }
+    ];
+
+    // --- GAME STATE ---
+    let currentScore = 0;
+    let currentStreak = 0;
+    let currentScenarioIndex = 0;
+    let filteredScenarios = [...pronunciationWordScenarios];
+    let selectedIndices = new Set();
+    let pronunciationVerified = false;
+
+    // --- DOM ELEMENTS ---
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const streakDisplay = document.getElementById('streakDisplay');
+    const caseProgressDisplay = document.getElementById('caseProgressDisplay');
+    const badgeCategory = document.getElementById('badgeCategory');
+    const difficultyBadge = document.getElementById('difficultyBadge');
+    const visualDescription = document.getElementById('visualDescription');
+    const speaker1Title = document.getElementById('speaker1Title');
+    const speaker1Text = document.getElementById('speaker1Text');
+    const speaker2Title = document.getElementById('speaker2Title');
+    const speaker2Text = document.getElementById('speaker2Text');
+    const speaker3Title = document.getElementById('speaker3Title');
+    const speaker3Text = document.getElementById('speaker3Text');
+    const speaker4Title = document.getElementById('speaker4Title');
+    const speaker4Text = document.getElementById('speaker4Text');
+    const speakDialogueBtn = document.getElementById('speakDialogueBtn');
+    const targetPronunciationPhrase = document.getElementById('targetPronunciationPhrase');
+    const listenTargetBtn = document.getElementById('listenTargetBtn');
+    const recordMicBtn = document.getElementById('recordMicBtn');
+    const revealHintBtn = document.getElementById('revealHintBtn');
+    const speechStatusBanner = document.getElementById('speechStatusBanner');
+    const wordPuzzleContainer = document.getElementById('wordPuzzleContainer');
+    const puzzleFeedback = document.getElementById('puzzleFeedback');
+    const proceduralStepText = document.getElementById('proceduralStepText');
+    const speakHowToBtn = document.getElementById('speakHowToBtn');
+    const challengeInstruction = document.getElementById('challengeInstruction');
+    const speakInstructionBtn = document.getElementById('speakInstructionBtn');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const feedbackBanner = document.getElementById('feedbackBanner');
+    const feedbackText = document.getElementById('feedbackText');
+    const feedbackSubtext = document.getElementById('feedbackSubtext');
+    const nextScenarioBtn = document.getElementById('nextScenarioBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const moduleSelect = document.getElementById('moduleSelect');
+    const mainContainer = document.getElementById('mainContainer');
+
+    // --- INITIALIZATION ---
+    function initGame() {
+      currentScore = 0;
+      currentStreak = 0;
+      currentScenarioIndex = 0;
+      filterScenarios();
+      updateHeaderStats();
+      loadScenario(currentScenarioIndex);
+    }
+
+    function filterScenarios() {
+      const val = moduleSelect.value;
+      if (val === 'all') {
+        filteredScenarios = [...pronunciationWordScenarios];
+      } else {
+        filteredScenarios = pronunciationWordScenarios.filter(s => s.moduleGroup === val);
+      }
+      currentScenarioIndex = 0;
+    }
+
+    function updateHeaderStats() {
+      scoreDisplay.textContent = currentScore;
+      streakDisplay.textContent = `${currentStreak}🔥`;
+      caseProgressDisplay.textContent = `${currentScenarioIndex + 1} / ${filteredScenarios.length}`;
+    }
+
+    // High-Acuity Level Sensitivity Scaler (Modules 1-20)
+    function getModuleLevelConfig(moduleNumber) {
+      if (moduleNumber <= 5) {
+        return { name: "Critical Care Specialist", threshold: 0.50, label: "Level 1: Critical Care Specialist (50% Precision)" };
+      } else if (moduleNumber <= 10) {
+        return { name: "Resuscitative / ECMO Specialist", threshold: 0.65, label: "Level 2: Resuscitative Specialist (65% Precision)" };
+      } else if (moduleNumber <= 15) {
+        return { name: "Perioperative & Crisis Specialist", threshold: 0.80, label: "Level 3: Crisis Management Specialist (80% Precision)" };
+      } else {
+        return { name: "Mastery / Licensure Specialist", threshold: 0.90, label: "Level 4: Licensure Mastery Specialist (90% Precision)" };
+      }
+    }
+
+    function loadScenario(index) {
+      if (index >= filteredScenarios.length) {
+        showFinalVictoryScreen();
+        return;
+      }
+
+      const sc = filteredScenarios[index];
+      const levelConfig = getModuleLevelConfig(sc.id);
+
+      selectedIndices.clear();
+      pronunciationVerified = false;
+      feedbackBanner.classList.add('hidden');
+      nextScenarioBtn.classList.add('hidden');
+      submitBtn.disabled = false;
+      puzzleFeedback.textContent = "";
+
+      badgeCategory.textContent = sc.moduleTitle;
+      difficultyBadge.textContent = levelConfig.label;
+      visualDescription.textContent = `📷 Setting: ${sc.visual}`;
+      
+      speaker1Title.textContent = sc.s1.speaker;
+      speaker1Text.textContent = `"${sc.s1.text}"`;
+      speaker2Title.textContent = sc.s2.speaker;
+      speaker2Text.textContent = `"${sc.s2.text}"`;
+      speaker3Title.textContent = sc.s3.speaker;
+      speaker3Text.textContent = `"${sc.s3.text}"`;
+      speaker4Title.textContent = sc.s4.speaker;
+      speaker4Text.textContent = `"${sc.s4.text}"`;
+
+      targetPronunciationPhrase.textContent = `"${sc.targetPhrase}"`;
+      proceduralStepText.textContent = sc.howTo;
+
+      // Build interactive word scramble puzzle
+      buildWordPuzzle(sc.puzzleWords);
+
+      // Auto-speak roundtable exchange with Male Voice
+      const fullExchange = `${sc.s1.speaker} states: ${sc.s1.text}. ${sc.s2.speaker} adds: ${sc.s2.text}. ${sc.s3.speaker} orders: ${sc.s3.text}. ${sc.s4.speaker} confirms: ${sc.s4.text}`;
+      tts.speak(fullExchange, 'male');
+
+      // Randomize Options
+      const randomizedOptions = shuffleArray(sc.options);
+
+      // Render Options (Female Voice)
+      optionsContainer.innerHTML = '';
+      randomizedOptions.forEach((opt, optIdx) => {
+        const card = document.createElement('div');
+        card.className = `option-card bg-slate-900/90 border-2 border-slate-700 hover:border-amber-400/80 p-4 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 text-slate-200 select-none group`;
+        card.dataset.index = optIdx;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="checkbox-box w-6 h-6 rounded-md border-2 border-slate-500 flex items-center justify-center flex-shrink-0 transition">
+              <span class="check-mark hidden text-amber-400 font-bold text-xs">✓</span>
+            </div>
+            <span class="font-semibold text-sm md:text-base group-hover:text-amber-200 transition">${opt.text}</span>
+          </div>
+          <button class="tts-opt-btn bg-slate-800 hover:bg-slate-700 text-teal-300 p-2 rounded-lg border border-slate-600 transition flex-shrink-0 text-xs flex items-center gap-1" title="Listen with Female Voice">
+            👩🔊 <span class="hidden md:inline">Listen</span>
+          </button>
+        `;
+
+        card.addEventListener('click', (e) => {
+          if (!e.target.closest('.tts-opt-btn')) {
+            toggleOptionSelect(optIdx, card);
+            tts.speak(opt.text, 'female');
+          }
+        });
+
+        card.dataset.isCorrect = opt.isCorrect ? "true" : "false";
+        card.dataset.reason = opt.reason || "";
+
+        const ttsBtn = card.querySelector('.tts-opt-btn');
+        ttsBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tts.speak(opt.text, 'female');
+        });
+
+        optionsContainer.appendChild(card);
+      });
+
+      updateHeaderStats();
+    }
+
+    function buildWordPuzzle(words) {
+      wordPuzzleContainer.innerHTML = "";
+      const shuffled = shuffleArray(words);
+      let clickedOrder = [];
+
+      shuffled.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = "bg-slate-900 border border-slate-700 hover:border-teal-400 text-teal-300 text-xs font-bold px-3 py-1.5 rounded-lg transition shadow";
+        btn.textContent = w;
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('bg-teal-900')) return;
+          btn.classList.remove('bg-slate-900');
+          btn.classList.add('bg-teal-900', 'text-amber-300', 'border-amber-400');
+          clickedOrder.push(w);
+
+          if (clickedOrder.length === words.length) {
+            if (clickedOrder.join(" ") === words.join(" ")) {
+              puzzleFeedback.textContent = "✅ Specialist terminology successfully reconstructed!";
+              soundFX.playCorrect();
+            } else {
+              puzzleFeedback.textContent = "💡 Sequence noted. Continue building term.";
+            }
+          }
+        });
+        wordPuzzleContainer.appendChild(btn);
+      });
+    }
+
+    function toggleOptionSelect(index, cardElement) {
+      const checkbox = cardElement.querySelector('.checkbox-box');
+      const checkMark = cardElement.querySelector('.check-mark');
+
+      if (selectedIndices.has(index)) {
+        selectedIndices.delete(index);
+        cardElement.classList.remove('border-amber-400', 'bg-amber-950/40');
+        cardElement.classList.add('border-slate-700');
+        checkbox.classList.remove('border-amber-400', 'bg-amber-900');
+        checkMark.classList.add('hidden');
+      } else {
+        selectedIndices.add(index);
+        cardElement.classList.remove('border-slate-700');
+        cardElement.classList.add('border-amber-400', 'bg-amber-950/40');
+        checkbox.classList.add('border-amber-400', 'bg-amber-900');
+        checkMark.classList.remove('hidden');
+      }
+    }
+
+    // --- HIGH-PERFORMANCE MIC & ADVANCED PHONETIC VERIFICATION ---
+    listenTargetBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      tts.speak(sc.targetPhrase, 'female', 0.80);
+    });
+
+    revealHintBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      alert(`Advanced Phonetic Articulation Guide:\n"${sc.phoneticHint}"`);
+      tts.speak(sc.phoneticHint, 'female', 0.75);
+    });
+
+    let currentRecognition = null;
+
+    recordMicBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      const levelConfig = getModuleLevelConfig(sc.id);
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        speechStatusBanner.classList.remove('hidden');
+        speechStatusBanner.textContent = `🎙️ Browser speech recognition unavailable. Advanced simulation verified for: "${sc.targetPhrase}"`;
+        pronunciationVerified = true;
+        tts.speak("Advanced pronunciation verified successfully!", 'female');
+        return;
+      }
+
+      if (currentRecognition) {
+        try { currentRecognition.abort(); } catch(e){}
+      }
+
+      const recognition = new SpeechRecognition();
+      currentRecognition = recognition;
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 3;
+
+      speechStatusBanner.classList.remove('hidden');
+      speechStatusBanner.textContent = `🎙️ Listening [${levelConfig.name}]... Articulate "${sc.targetPhrase}" clearly!`;
+      recordMicBtn.classList.add('recording-pulse');
+
+      let accumulatedSpeech = "";
+
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+        accumulatedSpeech = transcript.toLowerCase().trim();
+        speechStatusBanner.textContent = `🗣️ Hearing: "${accumulatedSpeech}"...`;
+
+        const target = sc.targetPhrase.toLowerCase().trim();
+        const targetWords = target.split(' ').map(w => w.replace(/[^a-z]/g, ''));
+        const spokenWords = accumulatedSpeech.split(' ').map(w => w.replace(/[^a-z]/g, ''));
+        
+        const matchedCount = targetWords.filter(tw => tw.length > 0 && spokenWords.some(sw => sw.includes(tw) || tw.includes(sw))).length;
+        const matchRatio = matchedCount / targetWords.length;
+
+        if (matchRatio >= levelConfig.threshold || accumulatedSpeech.includes(target) || target.includes(accumulatedSpeech)) {
+          pronunciationVerified = true;
+          recordMicBtn.classList.remove('recording-pulse');
+          speechStatusBanner.textContent = `✅ SPECIALIST ARTICULATION ACCEPTED! (${Math.round(matchRatio * 100)}% precision)`;
+          puzzleFeedback.textContent = `🎯 Verified Medical Term: "${sc.targetPhrase}"`;
+          soundFX.playCorrect();
+          tts.speak("Specialist articulation accepted!", 'female');
+          try { recognition.stop(); } catch(e){}
+        }
+      };
+
+      recognition.onerror = (err) => {
+        recordMicBtn.classList.remove('recording-pulse');
+        if (!pronunciationVerified) {
+          speechStatusBanner.textContent = `⚠️ Audio capture error (${err.error}). Click Practice Mic and re-articulate.`;
+        }
+      };
+
+      recognition.onspeechend = () => {
+        recordMicBtn.classList.remove('recording-pulse');
+        if (!pronunciationVerified && accumulatedSpeech.length > 0) {
+          speechStatusBanner.textContent = `❌ Articulation requires higher precision for ${levelConfig.name}. Spoken: "${accumulatedSpeech}"`;
+          soundFX.playIncorrect();
+          tts.speak("Articulation unaccepted. Please re-articulate.", 'female');
+        }
+      };
+
+      recognition.start();
+    });
+
+    // --- EVALUATION & GATED PROGRESSION ---
+    submitBtn.addEventListener('click', () => {
+      if (!pronunciationVerified) {
+        speechStatusBanner.classList.remove('hidden');
+        speechStatusBanner.textContent = "⚠️ Gated Licensure Protection: You must successfully record and pass the specialist term articulation via mic before submitting!";
+        tts.speak("Please articulate and pass the clinical term first.", 'female');
+        return;
+      }
+
+      const cards = optionsContainer.querySelectorAll('.option-card');
+      let isPerfect = true;
+      let mistakes = [];
+
+      cards.forEach((card, idx) => {
+        const wasSelected = selectedIndices.has(idx);
+        const isCorrect = card.dataset.isCorrect === "true";
+        const reason = card.dataset.reason;
+        const text = card.querySelector('span.font-semibold').textContent;
+
+        if (isCorrect && !wasSelected) {
+          isPerfect = false;
+          mistakes.push(`Missed valid evidence-based intervention: "${text}"`);
+        } else if (!isCorrect && wasSelected) {
+          isPerfect = false;
+          mistakes.push(`Selected clinical hazard trap: "${text}" (${reason})`);
+        }
+      });
+
+      submitBtn.disabled = true;
+      feedbackBanner.classList.remove('hidden');
+
+      if (isPerfect && selectedIndices.size > 0) {
+        currentScore += 100;
+        currentStreak++;
+        soundFX.playCorrect();
+        tts.speak("Correct! Perfect clinical and articulation match.", 'female');
+
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 90, spread: 80, origin: { y: 0.7 } });
+        }
+
+        feedbackBanner.className = "p-4 rounded-xl border border-emerald-500/80 bg-emerald-950/90 text-emerald-200 text-center shadow-xl space-y-2";
+        feedbackText.innerHTML = `🎉 ADVANCED SPECIALIST MASTERY! (+100 SCORE)`;
+        feedbackSubtext.textContent = "You successfully managed the high-acuity scenario and selected evidence-based interventions!";
+        
+        nextScenarioBtn.classList.remove('hidden');
+
+      } else {
+        currentScore = Math.max(0, currentScore - 50);
+        currentStreak = 0;
+        soundFX.playIncorrect();
+        tts.speak("Incorrect clinical evaluation. Review evidence-based guidelines.", 'female');
+
+        mainContainer.classList.add('bam-effect');
+        setTimeout(() => mainContainer.classList.remove('bam-effect'), 500);
+
+        feedbackBanner.className = "p-4 rounded-xl border border-rose-500/80 bg-rose-950/90 text-rose-200 text-center shadow-xl space-y-2";
+        feedbackText.innerHTML = `💥 CLINICAL ERROR IDENTIFIED (-50 SCORE)`;
+        feedbackSubtext.innerHTML = mistakes.length > 0 ? mistakes.join('<br>') : "Select correct evidence-based nursing interventions!";
+        
+        submitBtn.disabled = false;
+      }
+
+      updateHeaderStats();
+    });
+
+    nextScenarioBtn.addEventListener('click', () => {
+      currentScenarioIndex++;
+      loadScenario(currentScenarioIndex);
+    });
+
+    speakDialogueBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      const fullExchange = `${sc.s1.speaker} states: ${sc.s1.text}. ${sc.s2.speaker} adds: ${sc.s2.text}. ${sc.s3.speaker} orders: ${sc.s3.text}. ${sc.s4.speaker} confirms: ${sc.s4.text}`;
+      tts.speak(fullExchange, 'male');
+    });
+
+    speakHowToBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      tts.speak(sc.howTo, 'female');
+    });
+
+    speakInstructionBtn.addEventListener('click', () => {
+      const sc = filteredScenarios[currentScenarioIndex];
+      tts.speak(sc.howTo, 'female');
+    });
+
+    resetBtn.addEventListener('click', () => initGame());
+    moduleSelect.addEventListener('change', () => initGame());
+    soundToggle.addEventListener('click', () => {
+      soundFX.enabled = !soundFX.enabled;
+      soundToggle.textContent = soundFX.enabled ? "🔊 Audio FX: ON" : "🔇 Audio FX: OFF";
+    });
+
+    function showFinalVictoryScreen() {
+      optionsContainer.innerHTML = '';
+      speaker1Text.textContent = "🏆 ADVANCED SPECIALIST CURRICULUM MASTERY COMPLETED!";
+      speaker2Text.textContent = "All 20 High-Acuity Critical Care Modules Mastered";
+      speaker3Text.textContent = "Specialist Articulation & Clinical Decision Matrix Passed";
+      speaker4Text.textContent = "Curriculum Competency Certified";
+      visualDescription.textContent = "Advanced Clinical Mastery Achieved";
+      targetPronunciationPhrase.textContent = "Executive Licensure Standards Met";
+
+      tts.speak("Congratulations! You have successfully completed the Executive Clinical Pronunciation and Licensure Matrix.", 'female');
+
+      feedbackBanner.classList.remove('hidden');
+      feedbackBanner.className = "p-6 rounded-2xl border border-amber-500/80 bg-slate-900/95 text-amber-300 text-center shadow-2xl space-y-3";
+      feedbackText.innerHTML = `FINAL SPECIALIST EXAM SCORE: ${currentScore} POINTS`;
+      feedbackSubtext.innerHTML = `
+        <p class="text-sm text-slate-300">You have successfully mastered specialist clinical terminology, critical care pharmacology, and interprofessional handover protocols across all 20 modules!</p>
+        <p class="text-xs text-amber-400 font-bold">Curriculum & Pedagogical Framework © Giyono Asfarrasyid</p>
+      `;
+      nextScenarioBtn.style.display = 'none';
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
